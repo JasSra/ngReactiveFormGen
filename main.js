@@ -12,7 +12,7 @@ if (args == null || args == undefined || args.length < 3) {
 }
 
 var input = args[2];
-var output = "output/";
+var output = "";
 
 if (args.length > 3) {
     output = args[3];
@@ -49,12 +49,11 @@ fs.stat(input, (a, b) => {
 
 
         var outputComponentFile = obj.name + ".component.ts";
-        var outputTemplateFile = obj.name + ".component.html";
+        var outputTemplateFile =  obj.name + ".component.html"; 
 
- 
-
-        fs.writeFile(outputComponentFile,componentText,{encoding:'utf8',flag:'w'},()=> console.log('Component File saved'));
-        fs.writeFile(outputTemplateFile,formText,{encoding:'utf8',flag:'w'},()=> console.log('Template File saved'));
+        
+        fs.writeFile(outputComponentFile,componentText,{encoding:'utf8',flag:'w'},()=> console.log('Component File saved: ' + outputComponentFile));
+        fs.writeFile(outputTemplateFile,formText,{encoding:'utf8',flag:'w'},()=> console.log('Template File saved: ' + outputTemplateFile));
          
     });
 });
@@ -65,8 +64,7 @@ function generateFields(objectFields){
 
     for (let index = 0; index < objectFields.length; index++) {
         const e = objectFields[index];
-
-
+        
         var fieldTemplate = '';
         var fieldTemplatePath = './templates/' + e.type.toLowerCase() + ".map";
         
