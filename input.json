@@ -1,0 +1,19 @@
+{
+    "name":"invoice",
+    "fields":[
+        {
+            "name":"email",
+            "type":"text",
+            "min":1,
+            "max":100 ,
+            "maxLength":100 ,
+            "minLength":10 ,
+            "email": "bad@",
+            "required":true,
+            "requiredTrue":true,
+            "pattern":"\\w\\w" 
+
+        },
+        {"name":"firstName","type":"text","required":true}
+    ]
+}
