@@ -1,0 +1,4 @@
+<form [formGroup]="inputForm" (submit)="onFormSubmit()">
+     @@CONTENT
+  <button type="submit" [disabled]="!inputForm.valid">Submit</button>
+</form>

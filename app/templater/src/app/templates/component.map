@@ -1,0 +1,21 @@
+import { Component } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+
+@Component({
+  selector: '@@SELECTOR-app',
+  templateUrl: '@@SELECTOR.component.html'
+})
+export class @@SELECTORComponent {
+  
+  inputForm: any;
+  
+  constructor(private formBuilder: FormBuilder) {
+      this.inputForm = @@INPUTFORMINIT
+  }
+  
+  onFormSubmit() {
+    if (this.inputForm.dirty && this.inputForm.valid) {
+      alert('Form is invalid');
+    }
+  }
+}

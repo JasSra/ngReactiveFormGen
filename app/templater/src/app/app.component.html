@@ -1,0 +1,76 @@
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <div class="form-group">
+        <label>Object Header</label>
+        <input type="text" [(ngModel)]="header" class="form-control form-control-sm"/>
+      </div>
+      <hr/>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-4">
+     
+
+      <button (click)="add()" class="btn btn-sm btn-default">Add</button>
+      
+        <div *ngFor="let item of items; let i=index"  >
+          <div>
+            <label>Name</label>
+            <input class="form-control form-control-sm" type="text" [(ngModel)]="item.name" required/>
+          </div>
+          <div><label>type </label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.type" required/></div>
+          <div><label>placeholder </label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.placeholder"/></div>
+          <div ><label>label </label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.label"/></div>
+          
+
+          <div class="accordion" id="accordionExample">
+            <div class="card">
+              <div class="card-header" id="headingOne">
+                <h2 class="mb-0">
+                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Extra Properties
+                  </button>
+                </h2>
+              </div>
+          
+              <div id="collapseOne" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div class="card-body">
+                  <div><label> alt</label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.alt"/></div>
+                  <div><label>class </label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.class"/></div>
+                  <div><label>title </label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.title"/></div>
+                  <div><label> help</label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.help"/></div>
+                  <div><label> value</label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.value"/></div>
+                  <div><label> pattern</label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.pattern"/></div>
+                  <div><label> required</label><input class="form-control form-control-sm" type="checkbox" [(ngModel)]="item.required"/></div>
+                  <div><label>readonly </label><input class="form-control form-control-sm" type="checkbox" [(ngModel)]="item.readonly"/></div>
+                  <div><label>disabled </label><input class="form-control form-control-sm" type="checkbox" [(ngModel)]="item.disabled"/></div>
+                  <div><label>novalidate </label><input class="form-control form-control-sm" type="checkbox" [(ngModel)]="item.novalidate"/></div>
+                  <div><label>multiple </label><input class="form-control form-control-sm" type="checkbox" [(ngModel)]="item.multiple"/></div>
+                  <div><label>label </label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.label"/></div>
+                  <div><label>label </label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.label"/></div>
+                  <div><label> min</label><input class="form-control form-control-sm" type="number" [(ngModel)]="item.min"/></div>
+                  <div><label> max</label><input class="form-control form-control-sm" type="number" [(ngModel)]="item.max"/></div>
+                  <div><label>minLength </label><input class="form-control form-control-sm" type="number" [(ngModel)]="item.minLength"/></div>
+                  <div><label>maxLength </label><input class="form-control form-control-sm" type="number" [(ngModel)]="item.maxLength"/></div>
+                  <div><label>step </label><input class="form-control form-control-sm" type="number" [(ngModel)]="item.step"/></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+      
+        </div>
+      
+    </div>
+    <div>
+      <pre>{{items | json}}</pre>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col"></div>
+    <div class="col"></div>
+  </div>
+</div>
