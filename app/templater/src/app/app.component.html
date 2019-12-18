@@ -9,10 +9,9 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-lg-4">
-     
-
+    <div class="col-lg-4"> 
       <button (click)="add()" class="btn btn-sm btn-default">Add</button>
+      <button (click)="generate()" class="btn btn-sm btn-default">Generate</button>
       
         <div *ngFor="let item of items; let i=index"  >
           <div>
@@ -61,16 +60,18 @@
 
 
       
-        </div>
-      
-    </div>
+        </div> 
+        <pre>{{items | json}}</pre> 
+      </div>
     <div>
-      <pre>{{items | json}}</pre>
+      
     </div>
   </div>
 
   <div class="row">
-    <div class="col"></div>
-    <div class="col"></div>
+    <div class="col">
+      <pre>{{outputComponent}}</pre>
+    </div>
+    <div class="col">{{outputTemplate}}</div>
   </div>
 </div>
