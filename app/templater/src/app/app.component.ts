@@ -9,6 +9,11 @@ import {
   Observable
 } from 'rxjs';
 
+import hljs from 'highlight.js';
+
+declare var $: any;
+
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -20,8 +25,9 @@ export class AppComponent implements OnInit {
 
   outputTemplate: string;
   outputComponent: string;
-
-
+  item: FieldItem = null;
+  imported: string;
+  inputTypes: string[];
 
   header: string;
   items: FieldItem[] = [];
@@ -30,8 +36,29 @@ export class AppComponent implements OnInit {
 
 
   constructor(private http: HttpClient) {
+    this.inputTypes = [];
+    this.inputTypes.push('checkbox');
+    this.inputTypes.push('color');
+    this.inputTypes.push('date');
+    this.inputTypes.push('date-local');
+    this.inputTypes.push('email');
+    this.inputTypes.push('file');
+    this.inputTypes.push('hidden');
+    this.inputTypes.push('image');
+    this.inputTypes.push('month');
+    this.inputTypes.push('number');
+    this.inputTypes.push('password');
+    this.inputTypes.push('radio');
+    this.inputTypes.push('range');
+    this.inputTypes.push('search');
+    this.inputTypes.push('tel');
+    this.inputTypes.push('text');
+    this.inputTypes.push('time');
+    this.inputTypes.push('url');
+    this.inputTypes.push('week');
 
   }
+
   ngOnInit(): void {
     this.reset();
     this.templates = [];
@@ -39,11 +66,11 @@ export class AppComponent implements OnInit {
     this.templates.push({
       name: 'component.map',
       value: ''
-    })
+    });
     this.templates.push({
       name: 'defaultField.map',
       value: ''
-    })
+    });
     this.templates.push({
       name: 'form.map',
       value: ''
@@ -57,11 +84,10 @@ export class AppComponent implements OnInit {
         this.templates[element.name] = data;
         console.log(this.templates);
       });
-
     }
 
-
   }
+
   public getJSON(jsonURL): Observable < any > {
     return this.http.get(jsonURL, {
       responseType: 'text'
@@ -70,9 +96,9 @@ export class AppComponent implements OnInit {
 
   add() {
     this.items.push({
-      type: "text",
+      type: 'text',
       name: ''
-    })
+    });
   }
 
   reset() {
@@ -80,31 +106,28 @@ export class AppComponent implements OnInit {
     this.outputTemplate = '';
     this.header = '';
     this.items = [];
+    this.imported = '';
   }
 
   generate() {
-    let componentText = this.generateComponent('component.map', this.header, this.items);
-    let combinedFields = this.generateFields(this.items);
+    const componentText = this.generateComponent('component.map', this.header, this.items);
+    const combinedFields = this.generateFields(this.items);
+    let formText = this.templates['form.map'];
+    formText = formText.replace(/@@CONTENT/g, combinedFields.join(' '));
 
-  
-
-    var formText = this.templates["form.map"];
-    formText = formText.replace(/@@CONTENT/g, combinedFields.join('\n<br/>'));
-  
-
-    this.outputComponent = componentText;
-    this.outputTemplate = formText;
+    this.outputComponent = hljs.highlight('typescript', componentText).value;
+    this.outputTemplate = hljs.highlight('html', formText).value;
+    hljs.initHighlightingOnLoad();
 
   }
- 
   generateFields(objectFields): any[] {
 
     var combinedFields = [];
 
     for (let index = 0; index < objectFields.length; index++) {
       const e = objectFields[index];
- 
-    
+
+
       try {
 
         console.log(e);
@@ -117,10 +140,9 @@ export class AppComponent implements OnInit {
 
 
 
-       var fieldTemplate = this.templates['defaultField.map'];
+        var fieldTemplate = this.templates['defaultField.map'];
 
-       console.log(fieldTemplate);
-
+        // tslint:disable: max-line-length
         fieldTemplate = fieldTemplate.replace(/@@ID/g, this.getDefaultValue(e.id, e.name));
         fieldTemplate = fieldTemplate.replace(/@@TYPE/g, this.getDefaultValue(e.type, 'text'));
         fieldTemplate = fieldTemplate.replace(/@@LABEL/g, (this.getDefaultValue(e.label, e.name).replace(/([A-Z])/g, " $1")).toUpperCase());
@@ -128,10 +150,26 @@ export class AppComponent implements OnInit {
         fieldTemplate = fieldTemplate.replace(/@@CLASS/g, this.getDefaultValue(e.class));
         fieldTemplate = fieldTemplate.replace(/@@HELPTEXT/g, this.getDefaultValue(e.help));
         fieldTemplate = fieldTemplate.replace(/@@FORMCONTROLNAME/g, this.getDefaultValue(e.name));
-        fieldTemplate = fieldTemplate.replace(/@@ALT/g, e.name);
+        fieldTemplate = fieldTemplate.replace(/@@PLACEHOLDER/g, e.placeholder !== null && e.placeholder !== undefined && e.placeholder ? '"placeholder"="' + e.placeholder + '"' : '');
+        fieldTemplate = fieldTemplate.replace(/@@REQUIRED/g, e.required !== null && e.required !== undefined && e.required ? 'required' : '');
+        fieldTemplate = fieldTemplate.replace(/@@PATTERN/g, e.pattern !== null && e.pattern !== undefined ? '"pattern"="' + e.pattern + '"' : '');
+        fieldTemplate = fieldTemplate.replace(/@@READONLY/g, e.readonly !== null && e.readonly !== undefined && e.readonly ? 'readonly' : '');
+        fieldTemplate = fieldTemplate.replace(/@@DISABLED/g, e.disabled !== null && e.disabled !== undefined && e.disabled ? '[disabled]=' + e.disabled : '');
+        fieldTemplate = fieldTemplate.replace(/@@SIZE/g, e.size !== null && e.size !== undefined && !isNaN(e.size) ? '"size"=' + e.size : '');
+        fieldTemplate = fieldTemplate.replace(/@@MAXLENGTH/g, e.maxlength !== null && e.maxlength !== undefined && !isNaN(e.maxlength) ? '"maxlength"=' + e.maxlength : '');
+        fieldTemplate = fieldTemplate.replace(/@@AUTOCOMPLETE/g, e.autocomplete !== null && e.autocomplete !== undefined && e.autocomplete ? 'autocomplete' : '');
+        fieldTemplate = fieldTemplate.replace(/@@NOVALIDATE/g, e.novalidate !== null && e.novalidate !== undefined && e.novalidate ? 'novalidate' : '');
+        fieldTemplate = fieldTemplate.replace(/@@AUTOFOCUS/g, e.autofocus !== null && e.autofocus !== undefined && e.autofocus ? 'autofocus' : '');
+        fieldTemplate = fieldTemplate.replace(/@@FORMENCTYPE/g, e.formenctype !== null && e.formenctype !== undefined ? '"formenctype"="' + e.formenctype + '"' : '');
+        fieldTemplate = fieldTemplate.replace(/@@HEIGHT/g, e.height !== null && e.height !== undefined && !isNaN(e.height) ? '"height"=' + e.height : '');
+        fieldTemplate = fieldTemplate.replace(/@@WIDTH/g, e.width !== null && e.width !== undefined && !isNaN(e.width) ? '"width"=' + e.width : '');
+        fieldTemplate = fieldTemplate.replace(/@@MIN/g, e.min !== null && e.min !== undefined && !isNaN(e.min) ? '"min"=' + e.min : '');
+        fieldTemplate = fieldTemplate.replace(/@@MAX/g, e.max !== null && e.max !== undefined && !isNaN(e.max) ? '"max"=' + e.max : '');
+        fieldTemplate = fieldTemplate.replace(/@@MULTIPLE/g, e.multiple !== null && e.multiple !== undefined && e.multiple ? 'multiple' : '');
+        fieldTemplate = fieldTemplate.replace(/@@STEP/g, e.step !== null && e.step !== undefined && !isNaN(e.step) ? '"step"=' + e.step : '');
+        fieldTemplate = fieldTemplate.replace(/@@ALT/g, e.alt !== null && e.alt !== undefined ? e.alt : '');
 
-
-        combinedFields.push(fieldTemplate + "\n\n");
+        combinedFields.push(fieldTemplate);
 
       } catch (error) {
         console.error(error);
@@ -154,7 +192,7 @@ export class AppComponent implements OnInit {
 
     return valToReplace;
   }
-  generateComponent(componentPath, name,e): string {
+  generateComponent(componentPath, name, e): string {
     var component = this.templates[componentPath]; //, 'utf-8');
 
     //Todo: get list of all selectors in text;
@@ -165,7 +203,7 @@ export class AppComponent implements OnInit {
 
     console.log(e);
 
-    if (name ===null || name === undefined) {
+    if (name === null || name === undefined) {
       throw Error('name field missing in input');
     }
     if (e === null || e === undefined) {
@@ -220,7 +258,7 @@ export class AppComponent implements OnInit {
         if (validators.length == 1) {
           required = validators[0];
         } else {
-          required = '\n\t\tValidators.compose(' + validators.join('\n\t\t,') + ')';
+          required = 'Validators.compose(' + validators.join(',') + ')';
         }
       }
 
@@ -231,7 +269,7 @@ export class AppComponent implements OnInit {
       }
 
 
-      formInit += '\n\t ' + x.name + ': [""' + required + '],';
+      formInit += '' + x.name + ': [""' + required + '],';
     }
 
     if (formInit.endsWith(",")) formInit = formInit.substring(0, formInit.length - 1);
@@ -243,7 +281,32 @@ export class AppComponent implements OnInit {
     return component;
   }
 
+  showMore(item) {
+    this.item = item;
+    $('#myModal').modal('show');
+  }
+  closeShowMore() {
+    this.item = null;
+    $('#myModal').modal('hide');
+  }
+
+
+
+  showImport() {
+    this.imported = '';
+    $('#importModal').modal('show');
+  }
+
+  import() {
+    if (this.imported != null && this.imported.length > 0) {
+      this.items = JSON.parse(this.imported);
+      $('#importModal').modal('hide');
+    }
+  }
+
 }
+
+
 
 
 

@@ -1,77 +1,226 @@
-<div class="container">
+<div class="container-fluid">
   <div class="row">
-    <div class="col">
+    <div class="col-lg-4">
       <div class="form-group">
-        <label>Object Header</label>
-        <input type="text" [(ngModel)]="header" class="form-control form-control-sm"/>
+        <label>Object Title</label>
+        <input type="text" [(ngModel)]="header" class="form-control form-control-sm" />
       </div>
-      <hr/>
+      <hr />
     </div>
-  </div>
-  <div class="row">
-    <div class="col-lg-4"> 
-      <button (click)="add()" class="btn btn-sm btn-default">Add</button>
-      <button (click)="generate()" class="btn btn-sm btn-default">Generate</button>
-      
-        <div *ngFor="let item of items; let i=index"  >
-          <div>
-            <label>Name</label>
-            <input class="form-control form-control-sm" type="text" [(ngModel)]="item.name" required/>
-          </div>
-          <div><label>type </label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.type" required/></div>
-          <div><label>placeholder </label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.placeholder"/></div>
-          <div ><label>label </label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.label"/></div>
-          
-
-          <div class="accordion" id="accordionExample">
-            <div class="card">
-              <div class="card-header" id="headingOne">
-                <h2 class="mb-0">
-                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Extra Properties
-                  </button>
-                </h2>
-              </div>
-          
-              <div id="collapseOne" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordionExample">
-                <div class="card-body">
-                  <div><label> alt</label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.alt"/></div>
-                  <div><label>class </label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.class"/></div>
-                  <div><label>title </label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.title"/></div>
-                  <div><label> help</label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.help"/></div>
-                  <div><label> value</label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.value"/></div>
-                  <div><label> pattern</label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.pattern"/></div>
-                  <div><label> required</label><input class="form-control form-control-sm" type="checkbox" [(ngModel)]="item.required"/></div>
-                  <div><label>readonly </label><input class="form-control form-control-sm" type="checkbox" [(ngModel)]="item.readonly"/></div>
-                  <div><label>disabled </label><input class="form-control form-control-sm" type="checkbox" [(ngModel)]="item.disabled"/></div>
-                  <div><label>novalidate </label><input class="form-control form-control-sm" type="checkbox" [(ngModel)]="item.novalidate"/></div>
-                  <div><label>multiple </label><input class="form-control form-control-sm" type="checkbox" [(ngModel)]="item.multiple"/></div>
-                  <div><label>label </label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.label"/></div>
-                  <div><label>label </label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.label"/></div>
-                  <div><label> min</label><input class="form-control form-control-sm" type="number" [(ngModel)]="item.min"/></div>
-                  <div><label> max</label><input class="form-control form-control-sm" type="number" [(ngModel)]="item.max"/></div>
-                  <div><label>minLength </label><input class="form-control form-control-sm" type="number" [(ngModel)]="item.minLength"/></div>
-                  <div><label>maxLength </label><input class="form-control form-control-sm" type="number" [(ngModel)]="item.maxLength"/></div>
-                  <div><label>step </label><input class="form-control form-control-sm" type="number" [(ngModel)]="item.step"/></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-      
-        </div> 
-        <pre>{{items | json}}</pre> 
-      </div>
-    <div>
-      
-    </div>
-  </div>
-
-  <div class="row">
     <div class="col">
-      <pre>{{outputComponent}}</pre>
+      <br />
+      <div class="btn-group btn-group-sm">
+        <button (click)="add()" class="btn btn-sm btn-primary btn-group-sm">Add Row</button>
+        <button (click)="generate()" class="btn btn-sm btn-primary  btn-group-sm">Generate</button>
+        <button (click)="reset()" class="btn btn-sm btn-danger  btn-group-sm">Reset</button>
+        <button (click)="showImport()" class="btn btn-sm btn-primary  btn-group-sm">Import</button>
+      </div>
     </div>
-    <div class="col">{{outputTemplate}}</div>
+  </div>
+  <div class="row">
+    <div class="col-lg-4">
+      <table class="table table-dark table-striped table-bordered table-hover">
+        <thead>
+          <tr>
+            <td>Name</td>
+            <td>Type</td>
+            <td>Actions</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of items; let i=index">
+            <td>
+              <input class="form-control form-control-sm" type="text" [(ngModel)]="item.name" required />
+            </td>
+            <td>
+              <select class="form-control form-control-sm" [(ngModel)]="item.type">
+                <option></option>
+                <option *ngFor="let item of inputTypes" value="{{item}}">
+                  {{item}}
+                </option>
+              </select>
+            </td>
+
+            <td>
+              <button class="btn btn-sm btn-link" (click)="showMore(item)">More</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h4>DEBUG</h4>
+      <pre>{{items | json}}</pre>
+    </div>
+
+
+    <div class="col-lg-4">
+      <pre>
+        <code class="typescript" [innerHtml]="outputComponent">
+          
+        </code>
+      </pre>
+
+    </div>
+    <div class="col-lg-4">
+      <pre>
+          <code class="html"  [innerHtml]="outputTemplate">
+            
+          </code>
+        </pre>
+    </div>
   </div>
 </div>
+
+<div class="modal" tabindex="-1" role="dialog" id="myModal">
+  <div class="modal-dialog modal-lg" role="document" *ngIf="item">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{item.name}}</h5>
+        <button type="button" class="close" (click)="closeShowMore()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col">
+            <div>
+              <label> placeholder</label>
+              <input class="form-control form-control-sm" type="text" [(ngModel)]="item.placeholder" />
+            </div>
+          </div>
+          <div class="col">
+
+            <div>
+              <label> label</label>
+              <input class="form-control form-control-sm" type="text" [(ngModel)]="item.label" />
+            </div>
+
+          </div>
+          <div class="col">
+            <div>
+              <label> alt</label>
+              <input class="form-control form-control-sm" type="text" [(ngModel)]="item.alt" />
+            </div>
+
+          </div>
+        </div>
+
+
+        <div class="row">
+        
+          <div class="col">
+            <div><label> required</label><input class="form-control form-control-sm" type="checkbox"
+                [(ngModel)]="item.required" /></div>
+          </div>
+          <div class="col">
+            <div><label>readonly </label><input class="form-control form-control-sm" type="checkbox"
+                [(ngModel)]="item.readonly" /></div>
+          </div>
+          <div class="col">
+            <div><label>disabled </label><input class="form-control form-control-sm" type="checkbox"
+                [(ngModel)]="item.disabled" /></div>
+          </div>
+          <div class="col">
+            <div><label>novalidate </label><input class="form-control form-control-sm" type="checkbox"
+                [(ngModel)]="item.novalidate" /></div>
+          </div>
+          <div class="col">
+            <div><label>multiple </label><input class="form-control form-control-sm" type="checkbox"
+                [(ngModel)]="item.multiple" /></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div><label> min</label><input class="form-control form-control-sm" type="number" [(ngModel)]="item.min" />
+            </div>
+          </div>
+          <div class="col">
+            <div><label> max</label><input class="form-control form-control-sm" type="number" [(ngModel)]="item.max" />
+            </div>
+          </div>
+          <div class="col">
+            <div><label>minLength </label><input class="form-control form-control-sm" type="number"
+                [(ngModel)]="item.minLength" /></div>
+          </div>
+          
+          <div class="col">
+            <div><label>maxLength </label><input class="form-control form-control-sm" type="number"
+                [(ngModel)]="item.maxLength" /></div>
+          </div>
+        </div>
+        <div class="row">
+          
+          <div class="col">
+            <div><label> pattern</label><input class="form-control form-control-sm" type="text"
+                [(ngModel)]="item.pattern" /></div>
+          </div>
+
+          
+          <div class="col">
+            <div><label>class </label><input class="form-control form-control-sm" type="text"
+                [(ngModel)]="item.class" />
+            </div>
+          </div>
+          <div class="col">
+            <div><label>title </label><input class="form-control form-control-sm" type="text"
+                [(ngModel)]="item.title" />
+            </div>
+          </div>
+          <div class="col">
+            <div><label> help</label><input class="form-control form-control-sm" type="text" [(ngModel)]="item.help" />
+            </div>
+          </div>
+          <div class="col">
+            <div><label> value</label><input class="form-control form-control-sm" type="text"
+                [(ngModel)]="item.value" />
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div><label>label </label><input class="form-control form-control-sm" type="text"
+                [(ngModel)]="item.label" />
+            </div>
+          </div>
+          <div class="col">
+            <div><label>step </label><input class="form-control form-control-sm" type="number"
+                [(ngModel)]="item.step" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeShowMore()">Close</button>
+      </div>
+    </div>
+   
+  </div>
+</div>
+
+
+
+<div class="modal" tabindex="-1" role="dialog" id="importModal">
+  <div class="modal-dialog modal-lg" role="document" >
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Import Model</h5>
+        <h6 class="text-muted">Enter your json in the following text area</h6>
+        <button type="button" class="close"  data-dismiss="modal"  data- aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <textarea class="form-congrol form-control-plaintext " rows="10" [(ngModel)]="imported" placeholder="Enter your json  here" ></textarea>
+    
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="import()">Import</button>
+      </div>
+    </div>
+   
+  </div>
+</div>
+
