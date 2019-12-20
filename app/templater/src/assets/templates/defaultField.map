@@ -1,6 +1,6 @@
  <div class="form-group" title="@@TITLE">
     <label for="@@ID">@@LABEL</label>
-    <input type="@@TYPE" class="form-control @@CLASS" id="@@ID" aria-describedby="@@ALT" formControlName="@@FORMCONTROLNAME"  #@@FORMCONTROLNAME="ngControl" @@PLACEHOLDER @@DISABLED @@REQUIRED @@PATTERN @@READONLY @@SIZE @@MAXLENGTH @@AUTOCOMPLETE @@NOVALIDATE @@AUTOFOCUS @@FORMENCTYPE @@HEIGHT @@WIDTH @@MIN @@MAX @@MULTIPLE @@STEP>
+    <input type="@@TYPE" class="form-control @@CLASS" id="@@ID" aria-describedby="@@ALT" formControlName="@@FORMCONTROLNAME"  #@@FORMCONTROLNAME @@PLACEHOLDER @@DISABLED @@REQUIRED @@PATTERN @@READONLY @@SIZE @@MAXLENGTH @@AUTOCOMPLETE @@NOVALIDATE @@AUTOFOCUS @@FORMENCTYPE @@HEIGHT @@WIDTH @@MIN @@MAX @@MULTIPLE @@STEP>
     <small id="@@ALTHelpText" class="form-text text-muted">@@HELPTEXT</small>    
     <div *ngIf="@@FORMCONTROLNAME.touched && @@FORMCONTROLNAME.hasError('required')">Required</div>
 </div>

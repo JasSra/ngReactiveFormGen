@@ -10,6 +10,7 @@ import {
 } from 'rxjs';
 
 import hljs from 'highlight.js';
+import { isArray } from 'util';
 
 declare var $: any;
 
@@ -297,11 +298,92 @@ export class AppComponent implements OnInit {
     $('#importModal').modal('show');
   }
 
+  showImportObject() {
+    this.imported = '';
+    $('#importObjectModal').modal('show');
+  }
+
   import() {
     if (this.imported != null && this.imported.length > 0) {
+      this.reset();
       this.items = JSON.parse(this.imported);
       $('#importModal').modal('hide');
     }
+  }
+
+  importObject() {
+    if (this.imported != null && this.imported.length > 0) {
+      const obj = JSON.parse(this.imported);
+
+      this.reset();
+
+      this.items = this.parseObjectIntoItems(JSON.parse(this.imported), null);
+
+      $('#importModal').modal('hide');
+    }
+  }
+
+  parseObjectIntoItems(a: any, b: any) {
+
+  }
+
+  parseArray(): FieldItem[] {
+
+    return null;
+  }
+  parseObject(obj: any,name: string): FieldItem[] {
+
+    const fi: FieldItem [] = []; 
+    if (obj !== null && obj !== undefined) { 
+      if(isArray(obj)){
+        for (let index = 0; index < obj.length; index++) {
+          const element = obj[index];
+                }
+
+      }else{
+        for (const prop in obj) {
+          if (obj.hasOwnProperty(prop)) {
+            const f = new FieldItem();
+            f.name = prop;
+  
+            switch (typeof (prop)) {
+              case 'object':
+                if (isArray(obj[prop])) {
+                  f.children = [];
+                  f.children = this.parseArray(obj[prop],prop);
+                } else {
+                    f.children = [];
+                    f.children = this.parseObject(obj[prop], prop);
+  
+                }
+                break;
+              case 'number':
+                f.type = 'number';
+                break;
+              case 'bigint':
+                f.type = 'number';
+                break;
+              case 'boolean':
+                f.type = 'checkbox';
+                break;
+              case 'symbol':
+              case 'string':
+                case 'undefined':
+                f.type = 'text';
+                break; 
+              default:
+                f.type = 'text';
+                break;
+            }
+  
+            fi.push(f);
+          }
+        }
+      }
+
+    }
+
+    return null;
   }
 
 }
@@ -342,4 +424,5 @@ class FieldItem {
   help ? : string;
   class ? : string;
   title ? : string;
+  children ? : FieldItem[]
 }
