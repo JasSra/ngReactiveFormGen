@@ -30,10 +30,36 @@
         </thead>
         <tbody>
           <tr *ngFor="let item of items; let i=index">
-            <td>
+           <td colspan="3" *ngIf="item.children && item.children.length > 0">
+
+            <p class="text-white">{{item.name}} <small class="text-muted">Composite</small> </p>
+            <table>
+              <tr *ngFor="let c of item.children">
+                <td >
+                  <input class="form-control form-control-sm" type="text" [(ngModel)]="c.name" required />
+                </td>
+                <td>
+                  <select class="form-control form-control-sm" [(ngModel)]="c.type">
+                    <option></option>
+                    <option *ngFor="let c of inputTypes" value="{{c}}">
+                      {{c}}
+                    </option>
+                  </select>
+                </td>
+    
+                <td >
+                  <button class="btn btn-sm btn-link" (click)="showMore(c)">More</button>
+                </td>
+              </tr>
+            </table>
+
+
+           </td>
+            
+            <td  *ngIf="!item.children">
               <input class="form-control form-control-sm" type="text" [(ngModel)]="item.name" required />
             </td>
-            <td>
+            <td  *ngIf="!item.children">
               <select class="form-control form-control-sm" [(ngModel)]="item.type">
                 <option></option>
                 <option *ngFor="let item of inputTypes" value="{{item}}">
@@ -42,9 +68,10 @@
               </select>
             </td>
 
-            <td>
+            <td  *ngIf="!item.children">
               <button class="btn btn-sm btn-link" (click)="showMore(item)">More</button>
             </td>
+           
           </tr>
         </tbody>
       </table>

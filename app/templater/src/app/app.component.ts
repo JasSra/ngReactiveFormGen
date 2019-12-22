@@ -120,7 +120,7 @@ export class AppComponent implements OnInit {
 
   generate() {
     const componentText = this.generateComponent('component.map', this.header, this.items);
-    const combinedFields = this.generateFields(this.items);
+    const combinedFields = this.generateFields(this.items,null);
     let formText = this.templates['form.map'];
     formText = formText.replace(/@@CONTENT/g, combinedFields.join(' '));
 
@@ -133,7 +133,7 @@ export class AppComponent implements OnInit {
 
   }
 
-  generateFields(objectFields: FieldItem[]): string[] {
+  generateFields(objectFields: FieldItem[],parentName: string): string[] {
 
     var combinedFields: string[] = [];
 
@@ -145,10 +145,10 @@ export class AppComponent implements OnInit {
         if (e.children !== null && e.children !== undefined && e.children.length > 0) {
 
 
-          var groups: string[] = this.generateFields(e.children);;
+          var groups: string[] = this.generateFields(e.children , e.name);          
 
           if (groups !== null && groups !== undefined && groups.length > 0) {
-            var x = '<div formControlName="' + e.name + '">' + groups.join('') + '</div>';
+            var x = '<div class="nested" formGroupName="' + e.name + '">' + groups.join('') + '</div>';
             combinedFields.push(x);
           }
 
@@ -181,24 +181,61 @@ export class AppComponent implements OnInit {
           fieldTemplate = fieldTemplate.replace(/@@CLASS/g, this.getDefaultValue(e.class));
           fieldTemplate = fieldTemplate.replace(/@@HELPTEXT/g, this.getDefaultValue(e.help));
           fieldTemplate = fieldTemplate.replace(/@@FORMCONTROLNAME/g, this.getDefaultValue(e.name));
-          fieldTemplate = fieldTemplate.replace(/@@PLACEHOLDER/g, e.placeholder !== null && e.placeholder !== undefined && e.placeholder ? '"placeholder"="' + e.placeholder + '"' : '');
+          fieldTemplate = fieldTemplate.replace(/@@PLACEHOLDER/g, e.placeholder !== null && e.placeholder !== undefined && e.placeholder ? 'placeholder="' + e.placeholder + '"' : '');
           fieldTemplate = fieldTemplate.replace(/@@REQUIRED/g, e.required !== null && e.required !== undefined && e.required ? 'required' : '');
-          fieldTemplate = fieldTemplate.replace(/@@PATTERN/g, e.pattern !== null && e.pattern !== undefined ? '"pattern"="' + e.pattern + '"' : '');
+          fieldTemplate = fieldTemplate.replace(/@@PATTERN/g, e.pattern !== null && e.pattern !== undefined ? 'pattern="' + e.pattern + '"' : '');
           fieldTemplate = fieldTemplate.replace(/@@READONLY/g, e.readonly !== null && e.readonly !== undefined && e.readonly ? 'readonly' : '');
           fieldTemplate = fieldTemplate.replace(/@@DISABLED/g, e.disabled !== null && e.disabled !== undefined && e.disabled ? '[disabled]=' + e.disabled : '');
-          fieldTemplate = fieldTemplate.replace(/@@SIZE/g, e.size !== null && e.size !== undefined && !isNaN(e.size) ? '"size"=' + e.size : '');
-          fieldTemplate = fieldTemplate.replace(/@@MAXLENGTH/g, e.maxlength !== null && e.maxlength !== undefined && !isNaN(e.maxlength) ? '"maxlength"=' + e.maxlength : '');
+          fieldTemplate = fieldTemplate.replace(/@@SIZE/g, e.size !== null && e.size !== undefined && !isNaN(e.size) ? 'size=' + e.size : '');
+          fieldTemplate = fieldTemplate.replace(/@@MAXLENGTH/g, e.maxlength !== null && e.maxlength !== undefined && !isNaN(e.maxlength) ? 'maxlength=' + e.maxlength : '');
           fieldTemplate = fieldTemplate.replace(/@@AUTOCOMPLETE/g, e.autocomplete !== null && e.autocomplete !== undefined && e.autocomplete ? 'autocomplete' : '');
           fieldTemplate = fieldTemplate.replace(/@@NOVALIDATE/g, e.novalidate !== null && e.novalidate !== undefined && e.novalidate ? 'novalidate' : '');
           fieldTemplate = fieldTemplate.replace(/@@AUTOFOCUS/g, e.autofocus !== null && e.autofocus !== undefined && e.autofocus ? 'autofocus' : '');
-          fieldTemplate = fieldTemplate.replace(/@@FORMENCTYPE/g, e.formenctype !== null && e.formenctype !== undefined ? '"formenctype"="' + e.formenctype + '"' : '');
-          fieldTemplate = fieldTemplate.replace(/@@HEIGHT/g, e.height !== null && e.height !== undefined && !isNaN(e.height) ? '"height"=' + e.height : '');
-          fieldTemplate = fieldTemplate.replace(/@@WIDTH/g, e.width !== null && e.width !== undefined && !isNaN(e.width) ? '"width"=' + e.width : '');
-          fieldTemplate = fieldTemplate.replace(/@@MIN/g, e.min !== null && e.min !== undefined && !isNaN(e.min) ? '"min"=' + e.min : '');
-          fieldTemplate = fieldTemplate.replace(/@@MAX/g, e.max !== null && e.max !== undefined && !isNaN(e.max) ? '"max"=' + e.max : '');
+          fieldTemplate = fieldTemplate.replace(/@@FORMENCTYPE/g, e.formenctype !== null && e.formenctype !== undefined ? 'formenctype="' + e.formenctype + '"' : '');
+          fieldTemplate = fieldTemplate.replace(/@@HEIGHT/g, e.height !== null && e.height !== undefined && !isNaN(e.height) ? 'height=' + e.height : '');
+          fieldTemplate = fieldTemplate.replace(/@@WIDTH/g, e.width !== null && e.width !== undefined && !isNaN(e.width) ? 'width=' + e.width : '');
+          fieldTemplate = fieldTemplate.replace(/@@MIN/g, e.min !== null && e.min !== undefined && !isNaN(e.min) ? 'min=' + e.min : '');
+          fieldTemplate = fieldTemplate.replace(/@@MAX/g, e.max !== null && e.max !== undefined && !isNaN(e.max) ? 'max=' + e.max : '');
           fieldTemplate = fieldTemplate.replace(/@@MULTIPLE/g, e.multiple !== null && e.multiple !== undefined && e.multiple ? 'multiple' : '');
-          fieldTemplate = fieldTemplate.replace(/@@STEP/g, e.step !== null && e.step !== undefined && !isNaN(e.step) ? '"step"=' + e.step : '');
+          fieldTemplate = fieldTemplate.replace(/@@STEP/g, e.step !== null && e.step !== undefined && !isNaN(e.step) ? 'step=' + e.step : '');
           fieldTemplate = fieldTemplate.replace(/@@ALT/g, e.alt !== null && e.alt !== undefined ? e.alt : '');
+
+
+          var validations ='';
+
+          var levels = 'inputForm'
+
+          if(parentName !== null && parentName !== undefined && parentName.length > 0){
+            levels += '.controls[\'' + parentName + '\']';
+          }
+
+          levels+='.controls[\'' + e.name + '\']';
+
+          var errors = [];
+          errors.push('required');
+          errors.push('min');
+          errors.push('max');
+          errors.push('minLength');
+          errors.push('maxLength');
+          errors.push('pattern');
+          errors.push('pattern');
+
+          for (let index = 0; index < errors.length; index++) {
+            const p = errors[index];
+            
+             //Validation Messages
+          if(e[p] !== null && e[p] !== undefined){                      
+            validations += ' <div *ngIf="' + levels +  '.errors && !' + levels + '.pristine" class="m-error">' + e.name.toUpperCase() + ' validation failed :' + p +'.</div>';
+          }
+
+          }
+        
+         
+          
+          console.log(levels);
+          console.log(validations);
+
+          fieldTemplate = fieldTemplate.replace(/@@VALIDATIONS/g, validations !== null && validations !== undefined ? validations : '');
 
           combinedFields.push(fieldTemplate);
 
@@ -312,7 +349,7 @@ export class AppComponent implements OnInit {
             if (validators.length == 1) {
               required = validators[0];
             } else {
-              required = 'Validators.compose(' + validators.join(',') + ')';
+              required = 'Validators.compose([' + validators.join(',') + '])';
             }
           }
 

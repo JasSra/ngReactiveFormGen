@@ -2,3 +2,19 @@
      @@CONTENT
   <button class="btn btn-sm btn-success" type="submit" [disabled]="!inputForm.valid">Submit</button>
 </form>
+
+
+
+<style>
+.ng-valid[required], .ng-valid.required  {
+    border-left: 5px solid #42A948; /* green */
+  }
+  
+  .ng-invalid:not(form):not(.nested)  {
+    border-left: 5px solid #a94442; /* red */
+  }
+ .m-error{
+   font-size: 75%;
+   color:red;
+ }
+ </style>
