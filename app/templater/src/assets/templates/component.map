@@ -5,7 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
   selector: '@@SELECTOR-app',
   templateUrl: '@@SELECTOR.component.html'
 })
-export class @@SELECTORComponent {
+export class @@COMPONENTNAMEComponent {
   
   inputForm: any;
   

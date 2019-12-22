@@ -31,14 +31,18 @@ export class AppComponent implements OnInit {
   item: FieldItem = null;
   imported: string;
   inputTypes: string[];
-
+  storageKey: string = 'imported';
   header: string;
   items: FieldItem[] = [];
-
+  options: Options;
   templates: any[];
+  historyItems: string[];
 
 
   constructor(private http: HttpClient) {
+    this.options = {
+      enableValidation: true
+    }
     this.inputTypes = [];
     this.inputTypes.push('checkbox');
     this.inputTypes.push('color');
@@ -91,7 +95,6 @@ export class AppComponent implements OnInit {
 
       this.getJSON('/assets/templates/' + element.name).subscribe(data => {
         this.templates[element.name] = data;
-        console.log(this.templates);
       });
     }
 
@@ -120,7 +123,7 @@ export class AppComponent implements OnInit {
 
   generate() {
     const componentText = this.generateComponent('component.map', this.header, this.items);
-    const combinedFields = this.generateFields(this.items,null);
+    const combinedFields = this.generateFields(this.items, null);
     let formText = this.templates['form.map'];
     formText = formText.replace(/@@CONTENT/g, combinedFields.join(' '));
 
@@ -133,7 +136,7 @@ export class AppComponent implements OnInit {
 
   }
 
-  generateFields(objectFields: FieldItem[],parentName: string): string[] {
+  generateFields(objectFields: FieldItem[], parentName: string): string[] {
 
     var combinedFields: string[] = [];
 
@@ -145,7 +148,7 @@ export class AppComponent implements OnInit {
         if (e.children !== null && e.children !== undefined && e.children.length > 0) {
 
 
-          var groups: string[] = this.generateFields(e.children , e.name);          
+          var groups: string[] = this.generateFields(e.children, e.name);
 
           if (groups !== null && groups !== undefined && groups.length > 0) {
             var x = '<div class="nested" formGroupName="' + e.name + '">' + groups.join('') + '</div>';
@@ -201,41 +204,38 @@ export class AppComponent implements OnInit {
           fieldTemplate = fieldTemplate.replace(/@@ALT/g, e.alt !== null && e.alt !== undefined ? e.alt : '');
 
 
-          var validations ='';
+          if (this.options.enableValidation === true) {
+            var validations = '';
 
-          var levels = 'inputForm'
+            var levels = 'inputForm'
 
-          if(parentName !== null && parentName !== undefined && parentName.length > 0){
-            levels += '.controls[\'' + parentName + '\']';
+            if (parentName !== null && parentName !== undefined && parentName.length > 0) {
+              levels += '.controls[\'' + parentName + '\']';
+            }
+
+            levels += '.controls[\'' + e.name + '\']';
+
+            var errors = [];
+            errors.push('required');
+            errors.push('min');
+            errors.push('max');
+            errors.push('minLength');
+            errors.push('maxLength');
+            errors.push('pattern');
+            errors.push('pattern');
+
+            for (let index = 0; index < errors.length; index++) {
+              const p = errors[index];
+
+              //Validation Messages
+              if (e[p] !== null && e[p] !== undefined) {
+                validations += ' <div *ngIf="' + levels + '.errors && !' + levels + '.pristine && ' + levels + '.errors.' + p.toLowerCase() + '" class="m-error">' + e.name.toUpperCase() + ' validation failed: ' + p + '.</div>';
+              }
+
+            }
+
+            fieldTemplate = fieldTemplate.replace(/@@VALIDATIONS/g, validations !== null && validations !== undefined ? validations : '');
           }
-
-          levels+='.controls[\'' + e.name + '\']';
-
-          var errors = [];
-          errors.push('required');
-          errors.push('min');
-          errors.push('max');
-          errors.push('minLength');
-          errors.push('maxLength');
-          errors.push('pattern');
-          errors.push('pattern');
-
-          for (let index = 0; index < errors.length; index++) {
-            const p = errors[index];
-            
-             //Validation Messages
-          if(e[p] !== null && e[p] !== undefined){                      
-            validations += ' <div *ngIf="' + levels +  '.errors && !' + levels + '.pristine" class="m-error">' + e.name.toUpperCase() + ' validation failed :' + p +'.</div>';
-          }
-
-          }
-        
-         
-          
-          console.log(levels);
-          console.log(validations);
-
-          fieldTemplate = fieldTemplate.replace(/@@VALIDATIONS/g, validations !== null && validations !== undefined ? validations : '');
 
           combinedFields.push(fieldTemplate);
 
@@ -250,6 +250,10 @@ export class AppComponent implements OnInit {
     return combinedFields;
   }
 
+
+  copyJson(o) {
+    this.copyToClipboard(JSON.stringify(o));
+  }
   getDefaultValue(val, defa ? : any): any {
 
     var valToReplace;
@@ -265,7 +269,7 @@ export class AppComponent implements OnInit {
     return valToReplace;
   }
 
-  generateComponent(componentPath, name, e: FieldItem[]): string {
+  generateComponent(componentPath, name: string, e: FieldItem[]): string {
     var component = this.templates[componentPath]; //, 'utf-8');
 
     if (name === null || name === undefined) {
@@ -275,7 +279,8 @@ export class AppComponent implements OnInit {
       throw Error('fields are missing in input');
     }
 
-    component = component.replace(/@@SELECTOR/gi, name);
+    component = component.replace(/@@SELECTOR/gi, name.toLowerCase());
+    component = component.replace(/@@COMPONENTNAME/gi, name.substring(0,1).toUpperCase() + name.substring(1,name.length));
 
     let formInit = this.getComponentGroups(e);
     if (formInit.endsWith(",")) formInit = formInit.substring(0, formInit.length - 1);
@@ -391,18 +396,18 @@ export class AppComponent implements OnInit {
       if (r == true) {
         this.imported = '';
         this.reset();
-        $('#' + modal +'').modal('show');
+        $('#' + modal + '').modal('show');
       }
     } else {
       this.imported = '';
       this.reset();
-      $('#' + modal +'').modal('show');
+      $('#' + modal + '').modal('show');
     }
-  } 
- 
+  }
+
   import() {
     if (this.imported != null && this.imported.length > 0) {
-      this.storeImportedObject('imported', this.imported);
+      this.storeImportedObject(this.storageKey, this.imported);
       this.items = JSON.parse(this.imported);
       $('#importModal').modal('hide');
     }
@@ -412,7 +417,6 @@ export class AppComponent implements OnInit {
 
     if (this.imported != null && this.imported.length > 0) {
 
-      console.log(this.imported);
       this.items = this.parseObject(JSON.parse(this.imported), null);
 
       $('#importObjectModal').modal('hide');
@@ -435,6 +439,10 @@ export class AppComponent implements OnInit {
             }
           }
 
+          if (k.length > 50) {
+            k = [];
+          }
+
         } catch (error) {
           console.error('Local Storage item failed to parse');
         }
@@ -443,6 +451,44 @@ export class AppComponent implements OnInit {
       localStorage.setItem(key, JSON.stringify(k));
     }
   }
+
+  getImportedObject(key): string[] {
+    var j = localStorage.getItem(key);
+    console.log(j);
+    if (j !== null && j !== undefined && j.length > 0) {
+
+      try {
+        var items: any[] = JSON.parse(j);
+
+        if (items !== null && items !== undefined && items.length > 0) {
+
+          var l = [];
+
+          let count =0;
+          items = items.reverse();
+          for (let index = 0; index < items.length ; index++) {
+            if(count === 10 ){
+              break;
+            }
+
+            count+=1;
+
+            const x = items[index];
+            l.push(JSON.stringify(l));
+          }
+
+          return l;
+
+        }
+      } catch (error) {
+
+      }
+    }
+
+
+    return null;
+  }
+
 
   parseObject(obj: any, name: string): FieldItem[] {
 
@@ -513,6 +559,35 @@ export class AppComponent implements OnInit {
   }
 
 
+  loadHistory() {
+
+    this.historyItems = this.getImportedObject(this.storageKey);
+
+    console.log(this.historyItems);
+    $('#historyModal').modal('show');
+  }
+
+  loadFromHistory(x: string) {
+
+    if (x !== null && x !== undefined && x.length > 0) {
+
+      var k = JSON.parse(x);
+
+      if (this.items !== null && this.items.length > 0) {
+
+        var r = confirm("Pending changes. Reset ?");
+        if (r == true) {
+          this.reset();
+          this.items = k;
+        }
+      } else {
+        this.items = k;
+      }
+
+
+
+    }
+  }
 
   copyToClipboard(x: string) {
     navigator.clipboard.writeText(x);
@@ -520,7 +595,9 @@ export class AppComponent implements OnInit {
   }
 }
 
-
+class Options {
+  enableValidation ? : boolean
+}
 
 
 

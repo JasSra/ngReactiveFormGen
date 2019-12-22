@@ -1,0 +1,230 @@
+Ability to add row child and make composite
+ability to remove row
+figure out email field validation
+add extra validators abn credit phone mobile
+
+[{"type":"text","name":"name","required":true,"label":"Name","placeholder":"e.g John Doe"},{"type":"text","name":"phone1","label":"Phone 1"},{"type":"text","name":"phone2","label":"Phone 2"},{"type":"email","name":"email","required":true,"minLength":80,"max":4},{"type":"hidden","name":"addressId"},{"type":"composite","name":"address"},{"type":"hidden","name":"id"},{"type":"hidden","name":"isActive"}]
+
+
+credit card
+function validateCardNumber(number) {
+    var regex = new RegExp("^[0-9]{16}$");
+    if (!regex.test(number))
+        return false;
+
+    return luhnCheck(number);
+}
+
+function luhnCheck(val) {
+    var sum = 0;
+    for (var i = 0; i < val.length; i++) {
+        var intVal = parseInt(val.substr(i, 1));
+        if (i % 2 == 0) {
+            intVal *= 2;
+            if (intVal > 9) {
+                intVal = 1 + (intVal % 10);
+            }
+        }
+        sum += intVal;
+    }
+    return (sum % 10) == 0;
+}
+
+
+size 16 , max 18
+  <script type="text/javascript">
+    <!--
+    /* This script and many more are available free online at
+    The JavaScript Source!! http://javascript.internet.com
+    Created by: David Leppek :: https://www.azcode.com/Mod10
+
+    Basically, the algorithm takes each digit, from right to left and muliplies each second
+    digit by two. If the multiple is two-digits long (i.e.: 6 * 2 = 12) the two digits of
+    the multiple are then added together for a new number (1 + 2 = 3). You then add up the
+    string of numbers, both unaltered and new values and get a total sum. This sum is then
+    divided by 10 and the remainder should be zero if it is a valid credit card. Hense the
+    name Mod 10 or Modulus 10.
+    */
+    function Mod10(ccNumb) {  // v2.0
+      var valid = "0123456789"  // Valid digits in a credit card number
+      var len = ccNumb.length;  // The length of the submitted cc number
+      var iCCN = parseInt(ccNumb);  // Integer of ccNumb
+      var sCCN = ccNumb.toString();  // String of ccNumb
+      sCCN = sCCN.replace (/^\s+|\s+$/g,'');  // Strip spaces
+      var iTotal = 0;  // Integer total set at zero
+      var bNum = true;  // By default assume it is a number
+      var bResult = false;  // By default assume it is NOT a valid cc
+      var temp;  // Temporary variable for parsing string
+      var calc;  // Used for calculation of each digit
+
+      // Determine if the ccNumb is in fact all numbers
+      for (var j=0; j<len; j++) {
+        temp = "" + sCCN.substring(j, j+1);
+        if (valid.indexOf(temp) == "-1"){
+          bNum = false;
+        }
+      }
+
+      // If it is NOT a number, you can either alert to the fact, or just pass a failure
+      if (!bNum) {
+        /* alert("Not a Number"); */
+        bResult = false;
+      }
+
+      // Determine if it is the proper length
+      if ((len == 0) && (bResult)) {  // Nothing, the field is blank AND passed above # check
+        bResult = false;
+      }
+      else { // ccNumb is a number and the proper length - let's
+             //  see if it is a valid card number
+
+        if (len >= 15) {  // 15 or 16 for Amex or V/MC
+          for (var i=len;i>0;i--) {  // LOOP through the digits of the card
+            calc = parseInt(iCCN) % 10;  // Right most digit
+            calc = parseInt(calc);  // Assure it is an integer
+            iTotal += calc;  // Running total of the card number as we loop - Do Nothing to first digit
+            i--;  // Decrement the count - move to the next digit in the card
+            iCCN = iCCN / 10;                               // Subtracts right most digit from ccNumb
+            calc = parseInt(iCCN) % 10;     // NEXT right most digit
+            calc = calc *2;                                 // multiply the digit by two
+
+            // Instead of some screwy method of converting 16 to a string
+            // and then parsing 1 and 6 and then adding them to make 7,
+            // I use a simple switch statement to change the value
+            // of calc2 to 7 if 16 is the multiple.
+            switch(calc) {
+              case 10: calc = 1; break;  // 5*2=10 & 1+0 = 1
+              case 12: calc = 3; break;  // 6*2=12 & 1+2 = 3
+              case 14: calc = 5; break;  // 7*2=14 & 1+4 = 5
+              case 16: calc = 7; break;  // 8*2=16 & 1+6 = 7
+              case 18: calc = 9; break;  // 9*2=18 & 1+8 = 9
+              default: calc = calc;      // 4*2= 8 &   8 = 8  - the same for all lower numbers
+            }
+            iCCN = iCCN / 10;  // Subtracts right most digit from ccNum
+            iTotal += calc;  // Running total of the card number as we loop
+          } // END OF LOOP
+
+          if ((iTotal%10)==0){  // Check to see if the sum Mod 10 is zero
+            bResult = true;  // This IS (or could be) a valid credit card number.
+          }
+          else {
+            bResult = false;  // This could NOT be a valid credit card number
+          }
+        }
+      }
+
+      // Change alert to on-page display or other indication as needed.
+      if (bResult) {
+        alert("This IS a valid Credit Card Number!");
+      }
+      if (!bResult) {
+        alert("This is NOT a valid Credit Card Number!");
+      }
+      return bResult; // Return the results
+    }
+    // -->
+  </script>
+
+
+
+
+
+Phone: var pattern = /^0[0-8]\d{8}$/g;
+
+$("#mobile").blur(function(){
+    var mobile_ele = $("#mobile");
+    var mobileNum = mobile_ele.val();
+    var formattedNum = mobileNum.replace(/(\d{2})(\d{3})(\d{3})/g,"04$1 $2 $3");
+    mobile_ele.val(formattedNum);
+});
+$("#landline").blur(function(){
+    var landline_ele = $("#landline");
+    var landlineNum = mobile_ele.val();
+    var formattedNum = landlineNum.replace(/(\d{2})(\d{4})(\d{4})/g,"($1) $2 $3");
+    mobile_ele.val(formattedNum);
+});
+
+/// <summary>
+/// http://stackoverflow.com/questions/38781377
+/// 1. Subtract 1 from the first (left) digit to give a new eleven digit number         
+/// 2. Multiply each of the digits in this new number by its weighting factor         
+/// 3. Sum the resulting 11 products         
+/// 4. Divide the total by 89, noting the remainder         
+/// 5. If the remainder is zero the number is valid          
+/// </summary>
+public bool IsValidAbn(string abn)
+{
+    abn = abn?.Replace(" ", ""); // strip spaces
+
+    int[] weight = { 10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19 };
+    int weightedSum = 0;
+
+    //0. ABN must be 11 digits long
+    if (string.IsNullOrEmpty(abn) || !Regex.IsMatch(abn, @"^\d{11}$"))
+    {
+        return false;
+    }
+
+    //Rules: 1,2,3                                  
+    for (int i = 0; i < weight.Length; i++)
+    {
+        weightedSum += (int.Parse(abn[i].ToString()) - (i == 0 ? 1 : 0)) * weight[i];
+    }
+
+    //Rules: 4,5                 
+    return weightedSum % 89 == 0;
+}
+
+
+My JavaScript version of validating ABN and ACN
+
+ABN:
+
+function isValidABN(num) {
+    const weights = new Array(10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19);
+    // Convert to string and remove all white space
+    num = num.toString().replace(/\s/g, "");
+    // Split it to number array
+    num = num.split('').map(n => parseInt(n));
+    // Subtract 1 from the first (left-most) digit of the ABN to give a new 11 digit number
+    num[0] = num[0] - 1;
+    // Multiply each of the digits in this new number by a "weighting factor" based on its position as shown in the table below
+    num = num.map((n, i) => n * weights[i]);
+    // Sum the resulting 11 products
+    let total = num.reduce((acc, n) => {
+        return acc + n;
+    }, 0);
+    // Divide the sum total by 89, noting the remainder
+    if(total % 89 === 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+ACN:
+
+function isValidACN(num) {
+    const weights = new Array(8, 7, 6, 5, 4, 3, 2, 1);
+    // Convert to string and remove all white space
+    num = num.toString().replace(/\s/g, "");
+    // Split it to number array
+    num = num.split('').map(n => parseInt(n));
+    // Set the check digit and remove it 
+    let checkDigit = num.pop();
+    // Apply weighting to digits 1 to 8.
+    num = num.map((n, i) => n * weights[i]);
+    // Sum the products
+    let total = num.reduce((acc, n) => {
+        return acc + n;
+    }, 0);
+    // Divide by 10 to obtain remainder
+    let calculatedCheckDigit = (10 - (total % 10)) % 10;
+    // calculatedCheckDigit should match check digit
+    if(calculatedCheckDigit === checkDigit) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
