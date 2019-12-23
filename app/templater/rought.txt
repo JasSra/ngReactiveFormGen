@@ -3,6 +3,13 @@ ability to remove row
 figure out email field validation
 add extra validators abn credit phone mobile
 
+learn about viewcontent viewchild ng template ng container
+
+
+ng update @angular/core @angular/cli
+ng update @clr/angular
+
+
 [{"type":"text","name":"name","required":true,"label":"Name","placeholder":"e.g John Doe"},{"type":"text","name":"phone1","label":"Phone 1"},{"type":"text","name":"phone2","label":"Phone 2"},{"type":"email","name":"email","required":true,"minLength":80,"max":4},{"type":"hidden","name":"addressId"},{"type":"composite","name":"address"},{"type":"hidden","name":"id"},{"type":"hidden","name":"isActive"}]
 
 
@@ -227,4 +234,84 @@ function isValidACN(num) {
         return false;
     }
 }
+
+
+
+
+
+n template generate
+
+create full moudle based on a type 
+
+
+create
+list
+edit
+delete
+preview
+
+
+recommended ng add @clr/angular
+
+else 
+npm install @clr/icons @clr/angular @clr/ui @webcomponents/custom-elements@1.0.0 --save
+
+
+
+<ul>
+  <ng-template #recursiveList let-list>
+    <li *ngFor="let item of list">
+      {{item.name}}
+      <ul *ngIf="item.children.length > 0">  <!-- item.subnodes.length -->
+        <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: item.children }"></ng-container>
+      </ul>
+    </li>
+  </ng-template>
+  <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: list }"></ng-container>
+</ul>
+
+
+import { ValidatorFn, AbstractControl } from '@angular/forms';
+
+
+
+export function forbiddenNameValidator(nameRe: RegExp): ValidatorFn {
+    return (control: AbstractControl): {[key: string]: any} | null => {
+      const forbidden = nameRe.test(control.value);
+      return forbidden ? {'forbiddenName': {value: control.value}} : null;
+    };
+  }
+
+
+  //The identity validator implements the ValidatorFn interface. It takes an Angular control object as an argument and returns either null if the form is valid, or ValidationErrors otherwise.
+  export const identityRevealedValidator: ValidatorFn = (control: FormGroup): ValidationErrors | null => {
+    const name = control.get('name');
+    const alterEgo = control.get('alterEgo');
+  
+    return name && alterEgo && name.value === alterEgo.value ? { 'identityRevealed': true } : null;
+  };
+
+
+// tslint:disable-next-line: comment-format
+//Just like synchronous validators have the ValidatorFn and Validator interfaces, asynchronous validators have their own counterparts: AsyncValidatorFn and AsyncValidator.
+// tslint:disable-next-line: comment-format
+//<input [(ngModel)]="name" #model="ngModel" appSomeAsyncValidator>
+//<app-spinner *ngIf="model.pending"></app-spinner>
+//NOTE: on every form value change , validators are evaluated, means if your validator makes HTTP call, it might be stressfull for backend, try to add delay to it
+//e.g. <input [(ngModel)]="name" [ngModelOptions]="{updateOn: 'blur'}">
+
+  @Injectable({ providedIn: 'root' })
+export class UniqueAlterEgoValidator implements AsyncValidator {
+  constructor(private heroesService: HeroesService) {}
+
+  validate(
+    ctrl: AbstractControl
+  ): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> {
+    return this.heroesService.isAlterEgoTaken(ctrl.value).pipe(
+      map(isTaken => (isTaken ? { uniqueAlterEgo: true } : null)),
+      catchError(() => null)
+    );
+  }
+}
+
 
