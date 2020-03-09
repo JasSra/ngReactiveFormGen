@@ -6,3 +6,5 @@ Generate your forms with ease from just plain JS objects and more...
 * Resume previous form generation
 * Customize most paramters for forms
 * Bootstrap 4+ based out of the box
+
+![Screen](https://github.com/JasSra/ngReactiveFormGen/raw/master/screens/Screen1.png "Screen 1")
